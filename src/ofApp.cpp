@@ -2,106 +2,99 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+
+   
+   
+    
+   
     
     gui.setup();
-    gui.add(overallSpeed.setup("speed",1,0,3));
-    gui.add(noiseAmount.setup("noise",1,0,3));
-    gui.add(trail.setup("trail",6.0,0,20));
-    
-    p.assign(100,particle());
-    
-    for(int i = 0;i<p.size();i++){
+    gui.add(overallSpeed.setup("speed", 1, 0, 3));
+    gui.add(noiseAmount.setup("noise", 1, 0, 3));
+    gui.add(trail.setup("trail", 6.0, 0, 20));
+    gui.add(bLearnBackground.setup("capture bg", false));
+
+
+    p.assign(1500, particle());
+
+    for (int i = 0; i < p.size(); i++)
+    {
         p[i].setup();
     }
 
     ofSetBackgroundAuto(false);
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofSetFrameRate(60);
 
+    ofSetFrameRate(120);
+
+    bool bNewFrame = false;
     
-    for(int i = 0;i<p.size();i++){
-        p[i].update(overallSpeed,noiseAmount);
+  
+
+    //vidPlayer.update();
+    //bNewFrame = vidPlayer.isFrameNew();
+
+    if (bNewFrame == true)
+    {
+        //colorImg.setFromPixels(vidPlayer.getPixels());
+        colorImg.setFromPixels(cam.getPixels());
+        grayImg = colorImg;
+
+        if (bLearnBackground == true)
+        {
+            grayBg = grayImg;
+            bLearnBackground = false;
+        }
+
+        grayDiff.absDiff(grayBg, grayImg);
+        grayDiff.threshold(threshold);
+
+     
     }
+
+    vector<ofVec2f>blobPts;
+    for (int i = 0; i < contourFinder.nBlobs; i++)
+    {
+        for (int j = 0; j < contourFinder.blobs[i].pts.size(); j++)
+        {
+            blobPts.push_back(contourFinder.blobs[i].pts[j] * ofGetWidth());
+        }
+    }
+
+    for (int i = 0; i < p.size(); i++)
+    {
+       
+        p[i].update(overallSpeed, noiseAmount);
+    }
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofSetColor(0, 0, 0,trail);
+
+
+    ofSetColor(0, 0, 0, trail);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
-    ofSetColor(255, 255, 255,255);
-    for(int i = 0;i<p.size();i++){
-        p[i].draw(1);
+
+    ofSetColor(ofRandom(70, 120),ofRandom(70, 70),ofRandom(70, 120), 255);
+
+
+    for (int i = 0; i < p.size(); i++)
+    {
+        p[i].draw(1, p);
+
     }
-    
+
+
+    ofFill();
+    ofSetHexColor(0x333333);
+    //ofDrawRectangle(360, 540, 320, 240);
+    ofSetHexColor(0xffffff);
+
     gui.draw();
-   
-}
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseScrolled(int x, int y, float scrollX, float scrollY){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
