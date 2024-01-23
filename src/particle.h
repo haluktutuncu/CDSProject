@@ -1,24 +1,21 @@
+// particle.h
+
 #pragma once
 #include "ofMain.h"
 
-class particle
-{
+class Particle {
 public:
-    particle();
-    
     void setup();
-    void update(float speed,float noise);
-    void draw(float sizeDot);
-    
+    void update(float overallSpeed, float noiseAmount);
+    void draw();
+    void applyForce(const ofVec2f& force);
+
     ofVec2f pos;
     ofVec2f vel;
     ofVec2f frc;
-    
+    ofVec2f prevVel;  // prevVel'i buraya ekle
     float drag;
-    
-    ofVec2f uniqueVal;
     float size;
-
-    
-    
+    ofColor color;
+    ofVec2f uniqueVal;
 };
